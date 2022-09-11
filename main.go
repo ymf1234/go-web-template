@@ -19,8 +19,12 @@ import (
 
 // Go Web开发较通用的脚手架模板
 func main() {
+	if len(os.Args) < 2 {
+		return
+	}
+
 	//1、加载配置
-	if err := settings.Init(); err != nil {
+	if err := settings.Init(os.Args[1]); err != nil {
 		fmt.Printf("init settings failed, err:%v\n", err)
 		return
 	}
@@ -31,13 +35,13 @@ func main() {
 	}
 	defer zap.L().Sync()
 	//3、初始化Mysql连接
-	if err := mysql.InitDB(); err != nil {
+	if err := mysql.InitDB(settings.Conf.MySQLConfig); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 		return
 	}
 	defer mysql.Close()
 	//4、初始化Redis连接
-	if err := redis.Init(); err != nil {
+	if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 		fmt.Printf("init redis failed, err:%v\n", err)
 		return
 	}
